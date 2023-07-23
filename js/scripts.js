@@ -44,6 +44,7 @@ _gui.switch.addEventListener("click", () => {
 	_data.playerSequence = [];
 
 	disablePads();
+	changePadCursor("auto");
 
 	_gui.led.classList.remove("gui__led--active");
 	
@@ -77,20 +78,24 @@ const padListener = (e) => {
 	_data.sounds[soundId].play();
 	_data.playerSequence.push(soundId);
 
-	e.target.classList.remove("game__pad--active");
+	setTimeout(() => {
+		e.target.classList.remove("game__pad--active");
 
-	const currentMove = _data.playerSequence.length - 1;
-
-	if(_data.playerSequence[currentMove] !== _data.gameSequence[currentMove]){
-		_data.playerCanPlay = false;
-		disablePads();
-		resetOrPlayAgain();
-
-	}
-	else if(currentMove === _data.gameSequence.length - 1){
-		newColor();
-		playSequence();
-	}
+		const currentMove = _data.playerSequence.length - 1;
+	
+		if(_data.playerSequence[currentMove] !== _data.gameSequence[currentMove]){
+			_data.playerCanPlay = false;
+			disablePads();
+			resetOrPlayAgain();
+	
+		}
+		else if(currentMove === _data.gameSequence.length - 1){
+			newColor();
+			playSequence();
+		}
+	
+		waitForPlayerClick();
+	}, 250);
 
 }
 
@@ -130,6 +135,8 @@ const playSequence = () => {
 
 	_data.playerSequence = [];
 	_data.playerCanPlay = false;
+
+	changePadCursor("auto");
 	
 	const interval = setInterval(() => {
 	   if(!_data.gameOn){
@@ -142,6 +149,7 @@ const playSequence = () => {
 			   clearInterval(interval);
 			   disablePads();
 			   waitForPlayerClick();
+			   changePadCursor("pointer");
 			   _data.playerCanPlay = true;
 			   return;
 		   }
@@ -222,6 +230,9 @@ const resetOrPlayAgain = () => {
 }
 
 const changePadCursor = (cursorType) => {
+	_gui.pads.forEach(pad => {
+		pad.style.cursor = cursorType;
+	});
 
 }
 
